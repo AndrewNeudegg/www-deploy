@@ -17,4 +17,4 @@ This is still a work in progress and will see continued progress until I can get
 1. [Clone](repository) or [fork](https://help.github.com/en/articles/fork-a-repo) this repo.
 2. Make changes to the file `deployment/hosts`, such that it contains your target URL.
 3. Ensure that you have installed [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html), and have permission to access your target server. I would recommend configuring SSH to use Public Key login.
-4. Run a command, **CHECK THE COMMAND BEFORE YOU RUN IT, THE ARE DESTRUCTIVE**: `ansible-playbook -i hosts home_deploy.yml` from within the deployment directory.
+4. Run a command, **CHECK THE COMMAND BEFORE YOU RUN IT, THEY ARE DESTRUCTIVE**: `ansible-playbook -i hosts home_deploy.yml` from within the deployment directory.
