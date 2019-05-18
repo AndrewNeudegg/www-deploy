@@ -1,0 +1,17 @@
+{
+    "Account": {
+        "Email": "{{ site_owner_email_address }}",
+        "Registration": {
+            "body": {
+                "status": "valid",
+                "contact": [
+                    "mailto:{{ site_owner_email_address }}"
+                ]
+            },
+            "uri": "https://acme-v02.api.letsencrypt.org/acme/acct/41749006"
+        }
+    },
+    "Certificates": [],
+    "HTTPChallenges": {},
+    "TLSChallenges": {}
+}

@@ -1,0 +1,79 @@
+##
+## This task will deploy an instance of `nginx-simple` with associated files.
+##
+
+# Get some intel.
+- name: Check if the {{ this_play_name }} directory already exists.
+  stat:
+    path: '{{ this_data_path }}'
+  register: data_dir
+
+# Check for the existence of the docker compose file.
+- name: Check if the {{ this_play_name }} Docker Compose file exists.
+  stat:
+    path: '{{ this_docker_compose_file_location }}'
+  register: this_docker_file
+
+# Check if the given container is running.
+- name: Check if the {{ this_play_name }} container is running.
+  docker_container:
+    name: '{{ this_container_name }}'
+    state: present
+    image: '{{ this_container_image }}'
+    command: sleep infinity
+  register: container_status
+
+# Check if the given container needs to be removed.
+- name: Check if the {{ this_play_name }} container needs to be removed.
+  raw: "docker container inspect {{ this_container_name }}"
+  register: container_requires_removal
+
+## ----------------------------------------------------------------------
+
+# Stop the docker container if its running.
+- name: Stop traefik if it is already running.
+  when: container_status["ansible_facts"]["docker_container"]["State"]["Running"]
+  raw: 'docker-compose down -f {{ this_docker_compose_file_location }}'
+
+# Remove the docker compose file.
+- name: Stop traefik if it is already running.
+  when: container_status["ansible_facts"]["docker_container"]["State"]["Running"]
+  raw: 'rm {{ this_docker_compose_file_location }}'
+
+# Remove the container if it has been stopped.
+- name: Remove the old {{ this_play_name }} docker container if we need to.
+  raw: 'docker rm {{ this_container_name }}'
+  when: container_requires_removal.rc == 0
+
+# Delete the configuration files.
+- name: Delete {{ this_play_name }} data files from host.
+  become: true
+  raw: 'rm -rf {{ this_data_path }}'
+  when: data_dir.stat.exists == true
+
+# Delete the etc config files.
+- name: Delete {{ this_play_name }} docker-compose file from host.
+  become: true
+  raw: 'rm -f {{ this_docker_compose_file_location }}'
+  when: data_dir.stat.exists == true
+
+## ----------------------------------------------------------------------
+
+# Copy over the configuration if it does not already exist.
+- name: Copy {{ this_play_name }} configuration to the remote host.
+  become: true
+  copy:
+    src: '{{ local_data_root_path }}/'
+    dest: '{{ this_data_path }}'
+
+# Copy over the docker-compose file if it does not already exist.
+- name: Copy {{ this_play_name }} docker compose file to the remote host.
+  template:
+    src: '{{ local_docker_compose_file_location }}'
+    dest: '{{ this_docker_compose_file_location }}'
+
+## ----------------------------------------------------------------------
+
+# Start the Docker container.
+- name: Start the {{ this_play_name }} docker container.
+  raw: 'docker-compose -f {{ this_docker_compose_file_location }} up -d'

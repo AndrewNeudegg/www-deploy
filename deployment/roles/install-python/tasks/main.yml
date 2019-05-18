@@ -1,0 +1,9 @@
+# Remove any previous versions of python.
+- name: 'remove python'
+  raw: 'sudo apt -yq remove python || echo "Forced success"'
+# Install python.
+- name: 'install python'
+  raw: 'sudo apt -yq install python'
+# Install pip.
+- name: install pip.
+  raw: 'sudo apt -yq install python-pip'

@@ -1,0 +1,34 @@
+debug = true
+
+logLevel = "DEBUG"
+defaultEntryPoints = ["https"]
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+    [entryPoints.http.redirect]
+        entryPoint = "https"
+  [entryPoints.https]
+    address = ":443"
+  [entryPoints.https.tls]
+
+[retry]
+
+[docker]
+    endpoint = "unix:///var/run/docker.sock"
+    domain = "andrewneudegg.com"
+    watch = true
+    exposedByDefault = false
+
+[acme]
+    email = "andrew.neudegg@gmail.com"
+    storage = "acme.json"
+    entryPoint = "https"
+    onHostRule = true
+[acme.httpChallenge]
+    entryPoint = "http"
+
+[web]
+address = ":8080"
+    [web.auth.basic]
+        users = ["admin:$apr1$qR9OounK$.8ZN9A.uDTlm7TFRSE0pR0"]

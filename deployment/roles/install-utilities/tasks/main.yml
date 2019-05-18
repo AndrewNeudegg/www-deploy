@@ -1,0 +1,7 @@
+# Install git onto the remote.
+- name: 'Install git'
+  raw: 'sudo apt install git'
+
+# Install the docker python module via pip, so that ansible can use container facts.
+- name: Install python docker
+  raw: 'pip install docker'

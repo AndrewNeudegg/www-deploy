@@ -1,0 +1,19 @@
+---
+- name: Puts the cv page onto the remote.
+  hosts: all
+  remote_user: ubuntu
+  vars:
+    example_variable: "hello world"
+    # Variables for tweaking this playbook.
+    this_play_name: CV
+    this_data_path: '/etc/{{cv_container_name}}'
+    this_container_image: '{{ nginx_simple_image_name }}'
+    this_container_name: '{{ cv_container_name }}'
+    this_container_hostname: '{{ cv_container_hostname }}'
+    this_docker_compose_file_name: '{{ cv_container_name }}.{{ docker_compose_postfix }}'
+    this_docker_compose_file_location: '~/{{ this_docker_compose_file_name }}'
+    local_data_root_path: '{{ local_data_root }}/{{ cv_local_data_path }}'
+    local_docker_compose_file_location: '{{ shared_nginx_docker_compose_path }}'
+  roles:
+    - build-nginx-alpine
+    - deploy-nginx-simple

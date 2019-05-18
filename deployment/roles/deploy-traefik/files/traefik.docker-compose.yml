@@ -1,0 +1,23 @@
+version: "3"
+
+
+networks:
+  {{ traefik_container_network }}:
+    external: true
+
+services:
+  traefik:
+    image: {{ traefik_image }}
+    container_name: {{ traefik_container_name }}
+    restart: {{ traefik_container_restart }}
+    command: --api --docker  # Enables the web UI and tells Træfik to listen to docker
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/traefik:/etc/traefik
+    labels:
+      - traefik.docker.network=proxy
+    networks:
+        - {{ traefik_container_network }}

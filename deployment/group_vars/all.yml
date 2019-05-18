@@ -1,0 +1,39 @@
+---
+# Sitewide configuration
+site_domain_name: andrewneudegg.com
+site_owner_email_address: andrew.neudegg@gmail.com
+
+# docker run -d -p 8080:8080 -p 80:80 -v $PWD/traefik.toml:/etc/traefik/traefik.toml traefik
+
+# Global Configuration
+docker_compose_postfix: docker-compose.yml
+shared_nginx_docker_compose_path: '{{ playbook_dir }}/shared/nginx-simple.docker-compose.yml'
+
+
+# Nginx simple Block
+nginx_simple_image_name: nginx_simple
+
+# Traefik Block
+traefik_config_location: /etc/traefik
+traefik_dc_file_location: ~/traefik.docker-compose.yml
+traefik_dc_file_name: traefik.docker-compose.yml
+traefik_container_name: traefik
+traefik_image: 'traefik:latest'
+traefik_container_restart: always
+traefik_container_network: proxy
+
+# Home route
+home_container_name: andrewneudegg.com
+home_container_hostname: andrewneudegg.com
+home_remote_data_path: andrewneudegg.com
+home_local_data_path: andrewneudegg.com
+
+# CV route
+cv_container_name: cv.andrewneudegg.com
+cv_container_hostname: cv.andrewneudegg.com
+cv_remote_data_path: cv.andrewneudegg.com
+cv_local_data_path: cv.andrewneudegg.com
+
+
+# Data root paths
+local_data_root: '{{ playbook_dir }}/../data'

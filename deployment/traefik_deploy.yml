@@ -1,0 +1,6 @@
+---
+- name: Deploys traefik to a host
+  hosts: all
+  remote_user: ubuntu
+  roles:
+    - deploy-traefik

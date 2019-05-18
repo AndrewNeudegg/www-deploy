@@ -1,0 +1,8 @@
+- name: Remove any existing directory for building this docker image.
+  raw: 'sudo rm -rf /tmp/nginx-simple'
+
+- name: 'Download Nginx simple'
+  raw: 'cd /tmp && mkdir -p nginx-simple && git clone https://github.com/bedis/docker-nginx-simple.git nginx-simple'
+
+- name: 'Build Nginx simple'
+  raw: 'cd /tmp/nginx-simple && docker build --tag {{ nginx_simple_image_name }} .'

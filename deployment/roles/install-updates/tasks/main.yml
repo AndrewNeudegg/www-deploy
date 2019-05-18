@@ -1,0 +1,3 @@
+# Update and update the machine.
+- name: 'Update the machine'
+  raw: 'sudo apt -yq update && sudo apt -yq upgrade && sudo apt -yq autoremove'

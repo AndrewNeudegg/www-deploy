@@ -1,0 +1,20 @@
+version: "3"
+
+networks:
+  {{ traefik_container_network }}:
+    external: true
+
+services:
+  domain_root:
+    image: {{ nginx_simple_image_name }}:latest
+    container_name: {{ this_container_name }}
+    restart: always
+    volumes:
+      - {{ this_data_path }}:/var/www/
+    labels:
+      - traefik.frontend.rule=Host:{{ this_container_hostname }}
+      - traefik.docker.network={{ traefik_container_network }}
+      - traefik.port=80
+      - traefik.enable=true
+    networks:
+        - {{ traefik_container_network }}

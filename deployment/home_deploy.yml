@@ -1,0 +1,19 @@
+---
+- name: Puts the home page onto the remote.
+  hosts: all
+  remote_user: ubuntu
+  vars:
+    example_variable: "hello world"
+    # Variables for tweaking this playbook.
+    this_play_name: Home
+    this_data_path: '/etc/{{home_container_name}}'
+    this_container_image: '{{ nginx_simple_image_name }}'
+    this_container_name: '{{ home_container_name }}'
+    this_container_hostname: '{{ home_container_hostname }}'
+    this_docker_compose_file_name: '{{ home_container_name }}.{{ docker_compose_postfix }}'
+    this_docker_compose_file_location: '~/{{ this_docker_compose_file_name }}'
+    local_data_root_path: '{{ local_data_root }}/{{ home_local_data_path }}'
+    local_docker_compose_file_location: '{{ shared_nginx_docker_compose_path }}'
+  roles:
+    - build-nginx-alpine
+    - deploy-nginx-simple

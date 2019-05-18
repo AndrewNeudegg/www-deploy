@@ -1,0 +1,10 @@
+---
+- name: Gets a blank machine to a ready state.
+  hosts: all
+  remote_user: ubuntu
+  roles:
+    - install-python
+    - install-utilities
+    - install-updates
+    - install-docker-tools
+    - configure-firewall

@@ -1,0 +1,93 @@
+##
+## This task will deploy an instance of `traefik` with associated files.
+##
+## ----------------------------------------------------------------------
+
+# Get some intel.
+- name: Check if the Traefik Configuration directory exists.
+  stat:
+    path: '{{ traefik_config_location }}'
+  register: traefik_config_dir
+
+- name: Check if the Traefik Docker Compose file exists.
+  stat:
+    path: '{{ traefik_dc_file_location }}'
+  register: traefik_dc_file
+
+- name: Check if the Traefik container is running.
+  docker_container:
+    name: '{{ traefik_container_name }}'
+    state: present
+    image: '{{ traefik_image }}'
+    command: sleep infinity
+  register: traefik_container
+
+- name: Check if the docker network exists.
+  raw: "docker network inspect {{ traefik_container_network }}"
+  register: traefik_network_exists
+
+- name: Check if the traefik container needs to be removed.
+  raw: "docker container inspect {{ traefik_container_name }}"
+  register: traefik_requires_removal
+
+## ----------------------------------------------------------------------
+
+# Stop the docker container if its running.
+- name: Stop traefik if it is already running.
+  when: traefik_container["ansible_facts"]["docker_container"]["State"]["Running"]
+  raw: 'docker-compose down -f {{ traefik_dc_file_location }}'
+
+# Remove the docker compose file.
+- name: Stop traefik if it is already running.
+  when: traefik_container["ansible_facts"]["docker_container"]["State"]["Running"]
+  raw: 'rm {{ traefik_dc_file_location }}'
+
+# Remove the configuration files.
+- name: Remove the traefik configuration files.
+  become: true
+  raw: 'rm -rf {{ traefik_config_location }}'
+  when: traefik_config_dir.stat.exists == true
+
+## ----------------------------------------------------------------------
+
+- name: Recreate the Traefik configuration directory on the remote host.
+  become: true
+  raw: 'mkdir -p {{ traefik_config_location }}'
+
+# Copy over the Traefik configuration files if it does not already exist.
+- name: Copy Traefik configuration to the remote host acme.json.
+  become: true
+  template:
+    src: '{{ role_path }}/traefik/acme.json'
+    dest: '{{ traefik_config_location }}/acme.json'
+
+- name: Copy Traefik configuration to the remote host acme.json.
+  become: true
+  template:
+    src: '{{ role_path }}/traefik/traefik.toml'
+    dest: '{{ traefik_config_location }}/traefik.toml'
+
+- name: Set the appropriate permissions on acme.json.
+  become: true
+  raw: 'chmod 0600 {{ traefik_config_location }}/acme.json'
+
+# Copy over the docker-compose file.
+- name: Copy over the docker-compose file for Traefik over to the host.
+  template:
+    src: '{{ role_path }}/files/{{ traefik_dc_file_name }}'
+    dest: '{{ traefik_dc_file_location }}'
+
+## ----------------------------------------------------------------------
+
+# Create the docker network.
+- name: Create the docker network.
+  raw: 'docker network create {{ traefik_container_network }}'
+  when: traefik_network_exists.rc != 0
+
+- name: Remove the old traefik docker container if we need to.
+  raw: 'docker rm {{ traefik_container_name }}'
+  when: traefik_requires_removal.rc == 0
+
+# Start the Docker container.
+- name: Start the Traefik container.
+  raw: 'docker-compose -f {{ traefik_dc_file_location }} up -d'

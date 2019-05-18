@@ -1,0 +1,7 @@
+# File configures the UFW firewall on ubuntu as required.
+- name: 'Enable ssh port'
+  raw: 'sudo ufw allow 22/tcp'
+- name: 'Enable HTTP/s ports'
+  raw: 'sudo ufw allow 80/tcp && sudo ufw allow 443/tcp'
+- name: 'Disable and re-enable the firewall'
+  raw: 'sudo ufw disable && yes | sudo ufw enable'
